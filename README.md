@@ -31,7 +31,7 @@ Once everything is setup you can start automatically editing your videos  and st
 * [How-to-Contribute](#How-to-Contribute)
 * [Acknowledgements](#Acknowledgements)
 
-
+---
 **Features**
 
 ---
