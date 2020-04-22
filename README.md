@@ -76,7 +76,7 @@ We then use a vector scope to adjust the vividity of the image by changing the s
 **Polishing**
 
 And finally we check brigthness and the drakness of image. We then use the exposure and shadows to match the desired look
-and apply mask to improve even more.
+and apply a mask to improve even more.
 
 **How to Contribute**
 ---
