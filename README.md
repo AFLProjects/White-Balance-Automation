@@ -33,8 +33,8 @@ Once everything is setup you can start automatically editing your videos  and st
 * [Acknowledgements](#Acknowledgements)
 
 
-##Features
-
+.
+**Features**
 ---
 - Supports color grading/correction 
 - Contains optimized image analyzation/edition functions
