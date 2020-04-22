@@ -27,13 +27,13 @@ Once everything is setup you can start automatically editing your videos  and st
 
 <br></br>
 
-* [Features](##Features)
-* [Usage](##Usage)
-* [How-to-Contribute](##How-to-Contribute)
-* [Acknowledgements](##Acknowledgements)
+* [Features](#Features)
+* [Usage](#Usage)
+* [How-to-Contribute](#How-to-Contribute)
+* [Acknowledgements](#Acknowledgements)
 
 
-##Features
+**Features**
 
 ---
 - Supports color grading/correction 
@@ -41,7 +41,7 @@ Once everything is setup you can start automatically editing your videos  and st
 - It has precalculated default settings based on popular youtube videos
 - And offers multiple approches to setup your settings
 
-##Usage
+**Usage**
 ---
 ```
 -Download the project
@@ -55,14 +55,14 @@ Commands :
 	-edit <dir>		 //Edit your videos
 ```
 
-##How to Contribute
+**How to Contribute**
 ---
 
 1. Clone repo and create a new branch: `$ git checkout https://github.com/aflprojects/uvideo -b name_for_new_branch`.
 2. Make changes and test
 3. Submit Pull Request with comprehensive description of changes
 
-##Acknowledgements
+**Acknowledgements**
 ---
 + Base logo vector made by [Freepik](https://www.freepik.com/) from [Flaticon](www.flaticon.com).
 
