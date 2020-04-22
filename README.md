@@ -12,6 +12,7 @@
 </p>
 
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your videos.
+The program will take care of the color balencing and polishing based on the settings that you chose.
 
 You can either choose the **custom mode** and choose all your settings manually. 
 Or you can choose the **automatic mode** to analyze some of your previous videos and calculate the settings.
