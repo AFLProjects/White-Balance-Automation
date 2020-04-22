@@ -12,7 +12,6 @@
 </p>
 
 **About**
-
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your videos.
 
 
