@@ -27,8 +27,6 @@ Once everything is setup you can start automatically editing your videos  and st
 
 <br></br>
 
-[TOCM]
-
 [TOC]
 
 
