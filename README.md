@@ -11,15 +11,19 @@
 	<a href="">   <img src="https://img.shields.io/badge/Liscence-MIT-green" alt="Liscence"></a>   <img src="https://img.shields.io/badge/Platform-Windows-lightgray" alt="Platform"></a><a href="">   <img src="https://img.shields.io/badge/Version-1.013-blue"alt="Version"></a>
 </p>
 
+
 **About**
+
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your videos.
 
 
 **Settings**
+
 You can either choose the **custom mode** and choose all your settings manually. 
 Or you can choose the **automatic mode** to analyze some of your previous videos and calculate the settings.
 
 **Editing**
+
 Once everything is setup you can start automatically editing your videos  and stop losing your time doing labor :wink:
 
 <br></br>
@@ -30,6 +34,7 @@ Once everything is setup you can start automatically editing your videos  and st
 
 
 **Features**
+
 ---
 - Supports color grading/correction 
 - Contains optimized image analyzation/edition functions
