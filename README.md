@@ -58,19 +58,20 @@ We use the rgb parade to change the color balance, by using temperature and tint
 <p align="center"><img width="300px" src="https://i.imgur.com/FDINr3T.png"/></p>
 So basically if a color is too present we arrage the temperature and tint so the colors are balanced and natural
 
-
+<br></br>
 **Waveform**
 
 We then use a waveform representation of the image to adjust the whites/blacks/shadows
 <p align="center"><img width="500px" src="https://i.imgur.com/ATBXpax.png"/></p>
 
-
+<br></br>
 **Vector scope**
 
 We then use a vector scope to adjust the vivity of the image by changing saturation.
 
 <p align="center"><img width="350px" src="https://i.imgur.com/TaTRGA5.png"/></p>
 
+<br></br>
 **Polishing**
 
 We check brigthness and the drakness of image. We then use the exposure and shadows to match the desired look
