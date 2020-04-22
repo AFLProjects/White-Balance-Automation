@@ -1,11 +1,10 @@
 <p align="center">
 	<img width="200px" src="https://i.imgur.com/t1hhMP5.png"/>
-	
-	
-	Uvideo is a **C++ automated program** that **edits** the visual aspects of your clips by using
-some basic **color grading and correction.** 
 </p>
-
+<p align="center">
+	Uvideo is a **C++ automated program** that **edits** the visual aspects of your clips by usingsome basic **color grading and correction.** 
+</p>
+	
 ---------
 
 <p align="center">
