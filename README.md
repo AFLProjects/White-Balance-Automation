@@ -51,6 +51,7 @@ Commands :
 ---
 The program is based on four fundamental parts for color correction.
 
+
 **RGB Parade**
 
 We use the rgb parade to change the color balance, by using temperature and tint.
