@@ -9,7 +9,7 @@ some basic **color grading and correction.**
 ---------
 
 <p align="center">
-	![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)<a href="">   <img src="https://img.shields.io/badge/Liscence-MIT-green" alt="Liscence"></a>   <img src="https://img.shields.io/badge/Platform-Windows-lightgray" alt="Platform"></a><a href="">   <img src="https://img.shields.io/badge/Version-1.013-blue"alt="Version"></a>
+	<a href="">   <img src="https://img.shields.io/badge/Liscence-MIT-green" alt="Liscence"></a>   <img src="https://img.shields.io/badge/Platform-Windows-lightgray" alt="Platform"></a><a href="">   <img src="https://img.shields.io/badge/Version-1.013-blue"alt="Version"></a>
 </p>
 **About**
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your videos.
