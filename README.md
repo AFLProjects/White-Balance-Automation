@@ -25,15 +25,14 @@ Or you can choose the **automatic mode** to analyze some of your previous videos
 
 Once everything is setup you can start automatically editing your videos  and stop losing your time doing labor :wink:
 
-
+<br></br>
 **Table of contents**
 * [Features](#Features)
 * [Usage](#Usage)
 * [How-to-Contribute](#How-to-Contribute)
 * [Acknowledgements](#Acknowledgements)
-
-
 <br></br>
+
 **Features**
 ---
 - Supports color grading/correction 
