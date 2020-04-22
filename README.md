@@ -61,7 +61,7 @@ So basically if a color is too present we arrage the temperature and tint so the
 <br></br>
 **Waveform**
 
-We then use a waveform representation of the image to adjust the whites/blacks/shadows
+The second part is using a waveform representation of the image to adjust the whites/blacks/shadows
 <p align="center"><img width="500px" src="https://i.imgur.com/ATBXpax.png"/></p>
 
 <br></br>
@@ -74,8 +74,8 @@ We then use a vector scope to adjust the vivity of the image by changing saturat
 <br></br>
 **Polishing**
 
-We check brigthness and the drakness of image. We then use the exposure and shadows to match the desired look
-We finally apply mask to the have an even better look.
+And finally we check brigthness and the drakness of image. We then use the exposure and shadows to match the desired look
+and apply mask to improve even more.
 
 **How to Contribute**
 ---
