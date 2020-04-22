@@ -67,7 +67,7 @@ The second part is using a waveform representation of the image to adjust the wh
 <br></br>
 **Vector scope**
 
-We then use a vector scope to adjust the vivity of the image by changing saturation.
+We then use a vector scope to adjust the vividity of the image by changing saturation.
 
 <p align="center"><img width="350px" src="https://i.imgur.com/TaTRGA5.png"/></p>
 
