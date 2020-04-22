@@ -63,7 +63,7 @@ So basically if a color is too present we arrage the temperature and tint so the
 **Waveform**
 
 The second part is using a waveform representation of the image to adjust the whites/blacks/shadows
-<p align="center"><img width="500px" src="https://i.imgur.com/ATBXpax.png"/></p>
+<p align="center"><img width="700px" src="https://i.imgur.com/ATBXpax.png"/></p>
 
 <br></br>
 **Vector scope**
