@@ -49,10 +49,10 @@ Once everything is setup you can start automatically editing your videos  and st
 -Run uvideo.exe
 
 Commands :
-	-settings					//Show the current settings
-	-settings -s	  		  //Set custom settings
+	-settings		 //Show the current settings
+	-settings -s	  	 //Set custom settings
 	-settings -a <dir>	 //Calculate settings, by analyzing videos
-	-edit <dir>				//Edit your videos
+	-edit <dir>		 //Edit your videos
 ```
 
 **How to Contribute**
