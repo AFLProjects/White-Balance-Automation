@@ -12,6 +12,7 @@
 </p>
 
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your videos.
+The program will take care of the color balencing and polishing based on the settings that you chose.
 
 You can either choose the **custom mode** and choose all your settings manually. 
 Or you can choose the **automatic mode** to analyze some of your previous videos and calculate the settings.
@@ -22,6 +23,7 @@ Once everything is setup you can start automatically editing your videos  and st
 **Table of contents**
 * [Features](#Features)
 * [Usage](#Usage)
+* [How-it-works](#How-it-works)
 * [How-to-Contribute](#How-to-Contribute)
 * [Acknowledgements](#Acknowledgements)
 <br></br>
@@ -46,6 +48,35 @@ Commands :
 	-settings -a <dir>	 //Calculate settings, by analyzing videos
 	-edit <dir>		 //Edit your videos
 ```
+**How it works**
+---
+The program is based on four fundamental parts for color correction.
+
+
+**RGB Parade**
+
+We use the rgb parade to change the color balance, by using temperature and tint.
+<p align="center"><img width="300px" src="https://i.imgur.com/FDINr3T.png"/></p>
+So basically if a color is too present we arrage the temperature and tint so the colors are balanced and natural
+
+<br></br>
+**Waveform**
+
+The second part is using a waveform representation of the image to adjust the whites/blacks/shadows
+<p align="center"><img width="600px" src="https://i.imgur.com/ATBXpax.png"/></p>
+
+<br></br>
+**Vector scope**
+
+We then use a vector scope to adjust the vividity of the image by changing the saturation.
+
+<p align="center"><img width="350px" src="https://i.imgur.com/TaTRGA5.png"/></p>
+
+<br></br>
+**Polishing**
+
+And finally we check brigthness and the drakness of image. We then use the exposure and shadows to match the desired look
+and apply a mask to improve even more.
 
 **How to Contribute**
 ---
