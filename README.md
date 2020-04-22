@@ -10,7 +10,9 @@
 <p align="center">
 	<a href="">   <img src="https://img.shields.io/badge/Liscence-MIT-green" alt="Liscence"></a>   <img src="https://img.shields.io/badge/Platform-Windows-lightgray" alt="Platform"></a><a href="">   <img src="https://img.shields.io/badge/Version-1.013-blue"alt="Version"></a>
 </p>
+
 **About**
+
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your videos.
 
 
