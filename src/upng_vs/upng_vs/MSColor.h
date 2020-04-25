@@ -10,6 +10,7 @@ class MSColor
 		enum BaseColorSpace { RGB, XYZ }baseColorSpace;
 
 		MSColor(float h, float i, float j, BaseColorSpace bcs) { setColor(h, i, j, bcs); }
+		MSColor() { setColor(255, 255, 255, BaseColorSpace::RGB); }
 
 		void GetXYZFromRGB();
 		void GetRGBFromXYZ();
