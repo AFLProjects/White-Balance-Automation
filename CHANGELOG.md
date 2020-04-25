@@ -15,4 +15,11 @@ Added basic files :
 - Contributions.md
 - Changelog.md
 
+### 1.002
+---
+
+Added basic files :
+- Added Multi color space functions
+- Added color adaptation algorithm (no finished)
+- Added some test files
 
