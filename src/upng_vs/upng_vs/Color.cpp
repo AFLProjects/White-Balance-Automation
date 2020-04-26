@@ -1,11 +1,71 @@
 ﻿#include "stdafx.h"
-#include "MSColor.h"
+#include "Color.h"
 #include "cmath";
 
-/*Convert from RGB to XYZ Color Space*/
-void MSColor::GetXYZFromRGB() 
+#pragma region Constructors
+Color::Color(float r, float g, float b, bool XYZ = false)
 {
+	if (!XYZ) 
+	{
+		SetRGB(r, g, b);
+		GetXYZFromRGB();
+	}
+	else 
+	{
+		SetXYZ(r, g, b);
+		GetRGBFromXYZ();
+	}
+}
 
+Color::Color() 
+{
+	SetRGB(0, 0, 0);
+	GetXYZFromRGB();
+}
+#pragma endregion
+
+#pragma region RGB
+void Color::SetRGB(unsigned char r, unsigned char g, unsigned char b)
+{
+	this->R = r;
+	this->G = g;
+	this->B = b;
+}
+
+unsigned char& Color::GetRGB(char index)
+{
+	if (index == 0)
+		return this->R;
+	if (index == 1)
+		return this->G;
+	if (index == 2)
+		return this->B;
+}
+#pragma endregion
+
+#pragma region RGB
+void Color::SetXYZ(float x, float y, float z)
+{
+	this->X = x;
+	this->Y = y;
+	this->Z = z;
+}
+
+double&  Color::GetXYZ(char index)
+{
+	if (index == 0)
+		return this->X;
+	if (index == 1)
+		return this->Y;
+	if (index == 2)
+		return this->Z;
+}
+#pragma endregion
+
+#pragma region Conversions
+/*Convert from RGB to XYZ Color Space*/
+void Color::GetXYZFromRGB()
+{
 	double r = this->R / 255.0;
 	double g = this->G / 255.0;
 	double b = this->B / 255.0;
@@ -21,7 +81,7 @@ void MSColor::GetXYZFromRGB()
 
 
 /*Convert from XYZ to RGB Color Space*/
-void MSColor::GetRGBFromXYZ() 
+void Color::GetRGBFromXYZ()
 {
 	double x = this->X / 100.0;
 	double y = this->Y / 100.0;
@@ -41,29 +101,7 @@ void MSColor::GetRGBFromXYZ()
 
 }
 
-/*Set color and update all color spaces*/
-void MSColor::setColor(float h, float i, float j, BaseColorSpace bcs)
-{
-	if (bcs == RGB)
-	{
-		this->R = h;
-		this->G = i;
-		this->B = j;
-
-		GetXYZFromRGB();
-	}
-
-	if (bcs == XYZ)
-	{
-		this->X = h;
-		this->Y = i;
-		this->Z = j;
-
-		GetRGBFromXYZ();
-	}
-}
-
-float MSColor::getTemperature()
+float Color::getTemperature()
 {
 	/*normalized chromaticity values*/
 	float x = X / (X + Y + Z);
@@ -84,3 +122,8 @@ float MSColor::getTemperature()
 
 	return cct;
 }
+
+int RGB_565(int r, int g, int b) {
+	return (b & 0x1F) | ((g & 0x3F) << 5) | ((r & 0x1F) << 11);
+}
+#pragma endregion
