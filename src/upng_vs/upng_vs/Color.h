@@ -1,23 +1,23 @@
 class Color
 {
-private:
-
-	unsigned char R, G, B;	
-	double X, Y, Z;
-
-	void GetXYZFromRGB();
-	void GetRGBFromXYZ();
-
 public:
 
-	Color(float R, float G, float B, bool XYZ=false);
-	Color();
-		
-	void SetRGB(unsigned char r, unsigned char g, unsigned char b);
-	unsigned char& GetRGB(char index);
+	enum ColorType { RGB, XYZ, HSV };
 
-	void SetXYZ(float x, float y, float z);
-	double& GetXYZ(char index);
+	float data[3];
+	ColorType type;
+
+	Color(float a, float b, float c, ColorType type);
+	Color();
+
+	void SwitchTo(ColorType type);
 
 	float getTemperature();
+private:
+	void XYZtoRGB();
+	void RGBtoXYZ();
+	void HSVtoRGB();
+	void RGBtoHSV();
+	float min(float a, float b);
+	float max(float a, float b);
 };
