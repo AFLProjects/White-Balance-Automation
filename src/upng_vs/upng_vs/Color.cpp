@@ -202,35 +202,35 @@ void Color::SwitchTo(ColorType type)
 {
 	if (this->type == ColorType::RGB && type == ColorType::XYZ)
 	{
-		RGBtoXYZ();
-		type = ColorType::XYZ;
+		this->RGBtoXYZ();
+		this->type = ColorType::XYZ;
 	}
 	else if (this->type == ColorType::RGB && type == ColorType::HSV)
 	{
-		RGBtoHSV();
-		type = ColorType::HSV;
+		this->RGBtoHSV();
+		this->type = ColorType::HSV;
 	}
 	else if (this->type == ColorType::XYZ && type == ColorType::RGB)
 	{
-		XYZtoRGB();
-		type = ColorType::RGB;
+		this->XYZtoRGB();
+		this->type = ColorType::RGB;
 	}
 	else if (this->type == ColorType::XYZ && type == ColorType::HSV)
 	{
-		XYZtoRGB();
-		RGBtoHSV();
-		type = ColorType::HSV;
+		this->XYZtoRGB();
+		this->RGBtoHSV();
+		this->type = ColorType::HSV;
 	}
 	else if (this->type == ColorType::HSV && type == ColorType::RGB)
 	{
-		HSVtoRGB();
-		type = ColorType::RGB;
+		this->HSVtoRGB();
+		this->type = ColorType::RGB;
 	}
 	else if (this->type == ColorType::HSV && type == ColorType::XYZ)
 	{
-		HSVtoRGB();
-		RGBtoXYZ();
-		type = ColorType::XYZ;
+		this->HSVtoRGB();
+		this->RGBtoXYZ();
+		this->type = ColorType::XYZ;
 	}
 }
 #pragma endregion
