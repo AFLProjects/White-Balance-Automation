@@ -133,9 +133,9 @@ void Color::HSVtoRGB() {
 	fG += fM;
 	fB += fM;
 
-	this->data[0] = fR;
-	this->data[1] = fG;
-	this->data[2] = fB;
+	this->data[0] = fR * 255.0;
+	this->data[1] = fG * 255.0;
+	this->data[2] = fB * 255.0;
 }
 
 /*Convert from RGB to XYZ Color Space*/
@@ -197,37 +197,40 @@ float Color::getTemperature()
 	return cct;
 }
 
-int RGB_565(int r, int g, int b) {
-	return (b & 0x1F) | ((g & 0x3F) << 5) | ((r & 0x1F) << 11);
-}
 
 void Color::SwitchTo(ColorType type) 
 {
 	if (this->type == ColorType::RGB && type == ColorType::XYZ)
 	{
 		RGBtoXYZ();
+		type = ColorType::XYZ;
 	}
 	else if (this->type == ColorType::RGB && type == ColorType::HSV)
 	{
 		RGBtoHSV();
+		type = ColorType::HSV;
 	}
 	else if (this->type == ColorType::XYZ && type == ColorType::RGB)
 	{
 		XYZtoRGB();
+		type = ColorType::RGB;
 	}
 	else if (this->type == ColorType::XYZ && type == ColorType::HSV)
 	{
 		XYZtoRGB();
 		RGBtoHSV();
+		type = ColorType::HSV;
 	}
 	else if (this->type == ColorType::HSV && type == ColorType::RGB)
 	{
 		HSVtoRGB();
+		type = ColorType::RGB;
 	}
 	else if (this->type == ColorType::HSV && type == ColorType::XYZ)
 	{
 		HSVtoRGB();
 		RGBtoXYZ();
+		type = ColorType::XYZ;
 	}
 }
 #pragma endregion
