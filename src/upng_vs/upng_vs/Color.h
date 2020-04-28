@@ -1,3 +1,4 @@
+
 /*
 Color class for easy color space manipulations between RGB, XYZ and HSL
 */
@@ -9,7 +10,7 @@ public:
 	Color data
 	0 : R,X,H
 	1 : G,Y,S
-	2 :	B,Z,L
+	2 :	B,Z,V
 	*/
 	float data[3];
 

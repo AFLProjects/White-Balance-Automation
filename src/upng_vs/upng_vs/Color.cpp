@@ -1,6 +1,4 @@
-﻿#include "stdafx.h"
-#include "Color.h"
-#include "cmath";
+﻿#include "ImageProcessing.h"
 
 using namespace std;
 
@@ -18,9 +16,7 @@ Color::Color(float a, float b, float c, ColorType targetColSpace)
 
 Color::Color() 
 {
-	this->data[0] = 0;
-	this->data[1] = 0;
-	this->data[2] = 0;
+	memset(&this->data, 0, sizeof(this->data));
 	this->ColorSpace = ColorType::RGB;
 }
 #pragma endregion
