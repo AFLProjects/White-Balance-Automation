@@ -2,7 +2,7 @@
 	<img width="200px" src="https://i.imgur.com/t1hhMP5.png"/>
 </p>
 <p align="center">
-	UVIDEO is a C++ automated program that edits the visual aspects of your clips using some basic color grading and correction. 
+	UVIDEO is a C++ automated program that edits the visual aspects of your photos using some basic color grading and correction. 
 </p>
 	
 ---------
