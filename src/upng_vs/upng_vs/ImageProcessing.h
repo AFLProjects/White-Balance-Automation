@@ -33,10 +33,14 @@ public :
 
 	/*Sort pixels by brigthness using look up table where index = R+G+B*/
 	static void SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], vector<Color*>& imageCols, int imageSize);
+	static void SortPixels(vector<vector<unsigned char*>>& outLookupTable, int(&outColCount)[766], vector<unsigned char>& imageCols, int imageSize);
 
 	/*Find average white color using brightest pixels, using HSV->RGB , RGB->HSV conversions*/
 	static void FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& outLookupTable, int imageSize);
+	static void FindWhiteColor(Color& outWhiteColor, vector<vector<unsigned char*>>& outLookupTable, int imageSize);
 
 	/*Apply changes to image*/
 	static void ApplyChanges(vector<unsigned char>* outImgPtr, vector<Color*>& imageCols, Color& whiteRef, int imageSize);
+	static void ApplyChanges(vector<unsigned char>* outImgPtr, vector<unsigned char>& imageCols, Color& whiteRef, int imageSize);
+
 };
