@@ -1,6 +1,4 @@
-﻿/*!!!!!!To puzniej zmienie i juz nie bedzie clasy Color bo zpowalnia program!!!!!!!!*/
-
-#include "ImageProcessing.h"
+﻿#include "ImageProcessing.h"
 
 using namespace std;
 

@@ -1,5 +1,3 @@
-/*!!!!!!To puzniej zmienie i juz nie bedzie clasy Color bo zpowalnia program!!!!!!!!*/
-
 /*
 Color class for easy color space manipulations between RGB, XYZ and HSL
 */

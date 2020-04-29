@@ -32,7 +32,6 @@ void ImageProcessing::encodeImage(const char* filename, std::vector<unsigned cha
 
 #pragma region ImageEditing
 /*Convert vector<unsigned char> to vector<Color>*/
-/*!!!!!!To puzniej zmienie i juz nie bedzie clasy Color bo zpowalnia program!!!!!!!!*/
 void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* inputImagePtr, int imageSize)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
@@ -85,10 +84,12 @@ void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&ou
 	int SortingWorkFinishedOld = 0;
 	int SortingWorkFinished = 0;
 
+	Color col;
+
 	for (int i = 0; i < imageSize; i++)
 	{
 		/*Get col*/
-		Color col = *(imageCols[i]);
+		col = *(imageCols[i]);
 		int index = (int)(col.data[0] + col.data[1] + col.data[2]); /*Find index R+G+B*/
 		outLookupTable[index].push_back(imageCols[i]); /*Push color*/
 		/*Tutaj spóbuje zrobić array i nie robić pusz_back bo jest wolny*/
