@@ -32,7 +32,7 @@ void ImageProcessing::encodeImage(const char* filename, std::vector<unsigned cha
 
 #pragma region ImageEditing
 /*Convert vector<unsigned char> to vector<Color>*/
-void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* inputImagePtr, int imageSize)
+void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* inputImagePtr, int imageSize, int speedUpAmout)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
@@ -40,7 +40,8 @@ void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* i
 	int ExtractingWorkFinished = 0; /*Progress bar value*/
 
 	/*Convert all the colors to Color class*/
-	for (int i = 0; i < (imageSize * 4) - 1; i += 4)
+	int p = 4 * speedUpAmout;
+	for (int i = 0; i < (imageSize * 4) - 1; i += p)
 	{
 		/*Color extracting*/
 		Color *col = new Color((float)((*inputImagePtr)[i]), (float)((*inputImagePtr)[i + 1]), (float)((*inputImagePtr)[i + 2]), Color::ColorType::RGB);
@@ -75,8 +76,9 @@ void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* i
 
 }
 
+
 /*Sort pixels by brigthness using look up table where index = R+G+B*/
-void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], vector<Color*>& imageCols, int imageSize)
+void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], vector<Color*>& imageCols, int imageSize,int speedUpAmout)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
@@ -86,7 +88,7 @@ void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&ou
 
 	Color col;
 
-	for (int i = 0; i < imageSize; i++)
+	for (int i = 0; i < imageSize; i+=speedUpAmout)
 	{
 		/*Get col*/
 		col = *(imageCols[i]);
@@ -178,12 +180,12 @@ void ImageProcessing::SortPixels(vector<vector<unsigned char*>>& outLookupTable,
 }
 
 /*Find average white color using brightest pixels, using HSV->RGB , RGB->HSV conversions*/
-void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize)
+void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize,int speedUpAmout)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
 	/*Count of "white" pixels i want to produce white reference pixel -> 0.8%*/
-	int whiteCount = round(0.8 / 100.0*imageSize);
+	int whiteCount = round(0.8 / 100.0*imageSize)*speedUpAmout;
 	int currentCount = 0;
 
 	/*Progess bar values*/
@@ -353,10 +355,11 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 
 	for (int i = 0; i < imageSize; i++)
 	{
+		/*
 		Color* col;
 		col = imageCols[i];
 
-		/*If white color multiplication coefficient exceeds x3 , go for x3*/
+		
 		if (whiteRef.data[0] > 3)
 			whiteRef.data[0] = 3;
 		if (whiteRef.data[1] > 3)
@@ -364,12 +367,10 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 		if (whiteRef.data[2] > 3)
 			whiteRef.data[2] = 3;
 
-		/*Apply white ref*/
 		(*col).data[0] *= whiteRef.data[0];
 		(*col).data[1] *= whiteRef.data[1];
 		(*col).data[2] *= whiteRef.data[2];
 
-		/*If 255 is exeeded, change it*/
 		if ((*col).data[0] >= 255)
 			(*col).data[0] = 255;
 
@@ -379,10 +380,31 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 		if ((*col).data[2] >= 255)
 			(*col).data[2] = 255;
 
-		/*Apply values to initial image ptr*/
 		(*outImgPtr)[i * 4] = (char)round((*col).data[0]);
 		(*outImgPtr)[(i * 4) + 1] = (char)round((*col).data[1]);
-		(*outImgPtr)[(i * 4) + 2] = (char)round((*col).data[2]);
+		(*outImgPtr)[(i * 4) + 2] = (char)round((*col).data[2]);*/
+
+		if (whiteRef.data[0] > 3)
+			whiteRef.data[0] = 3;
+		if (whiteRef.data[1] > 3)
+			whiteRef.data[1] = 3;
+		if (whiteRef.data[2] > 3)
+			whiteRef.data[2] = 3;
+
+		int R = (int)round((*outImgPtr)[i * 4] * whiteRef.data[0]);
+		int G = (int)round((*outImgPtr)[(i * 4) + 1] * whiteRef.data[1]);
+		int B = (int)round((*outImgPtr)[(i * 4) + 2] * whiteRef.data[2]);
+
+		if (R > 255)
+			R = 255;
+		if (G > 255)
+			G = 255;
+		if (B > 255)
+			B = 255;
+
+		(*outImgPtr)[i * 4] = (char)R;
+		(*outImgPtr)[(i * 4) + 1] = (char)G;
+		(*outImgPtr)[(i * 4) + 2] = (char)B;
 
 		/*Progess bar*/
 		ApplyWorkFinishedOld = ApplyWorkFinished;
@@ -425,12 +447,6 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<unsi
 		/*col = imageCols[i];*/
 
 		/*If white color multiplication coefficient exceeds x3 , go for x3*/
-		if (whiteRef.data[0] > 3)
-			whiteRef.data[0] = 3;
-		if (whiteRef.data[1] > 3)
-			whiteRef.data[1] = 3;
-		if (whiteRef.data[2] > 3)
-			whiteRef.data[2] = 3;
 
 		/*Apply white ref*/
 
@@ -451,9 +467,13 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<unsi
 		if ((*col).data[2] >= 255)
 			(*col).data[2] = 255;*/
 
-		int R_ = round((*outImgPtr)[i * 4] * whiteRef.data[0]);
-		int G_ = round((*outImgPtr)[(i * 4) + 1] * whiteRef.data[1]);
-		int B_ = round((*outImgPtr)[(i * 4) + 2] * whiteRef.data[2]);
+		unsigned char pR = (*outImgPtr)[i * 4];
+		unsigned char pG = (*outImgPtr)[(i * 4) + 1];
+		unsigned char pB = (*outImgPtr)[(i * 4) + 2];
+
+		int R_ = round(pR * whiteRef.data[0]);
+		int G_ = round(pG * whiteRef.data[1]);
+		int B_ = round(pB * whiteRef.data[2]);
 
 		if (R_ > 255)
 			R_ = 255;
@@ -463,9 +483,9 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<unsi
 			B_ = 255;
 
 		/*Apply values to initial image ptr*/
-		(*outImgPtr)[i * 4] = (char)R_;
-		(*outImgPtr)[(i * 4) + 1] = (char)G_;
-		(*outImgPtr)[(i * 4) + 2] = (char)B_;
+		pR = (char)R_;
+		pG = (char)G_;
+		pB = (char)B_;
 
 		/*Progess bar*/
 		ApplyWorkFinishedOld = ApplyWorkFinished;

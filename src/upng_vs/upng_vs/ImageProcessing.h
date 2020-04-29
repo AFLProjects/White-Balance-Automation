@@ -29,14 +29,14 @@ public :
 	/*<-----------EDITING SECTION------------->/
 
 	/*Convert vector<unsigned char> to vector<Color>*/
-	static void DecodePixels(vector<Color*>& out, vector<unsigned char>* inputImagePtr, int imageSize);
+	static void DecodePixels(vector<Color*>& out, vector<unsigned char>* inputImagePtr, int imageSize, int speedUpAmout);
 
 	/*Sort pixels by brigthness using look up table where index = R+G+B*/
-	static void SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], vector<Color*>& imageCols, int imageSize);
+	static void SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], vector<Color*>& imageCols, int imageSize,int speedUpAmout);
 	static void SortPixels(vector<vector<unsigned char*>>& outLookupTable, int(&outColCount)[766], vector<unsigned char>& imageCols, int imageSize);
 
 	/*Find average white color using brightest pixels, using HSV->RGB , RGB->HSV conversions*/
-	static void FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& outLookupTable, int imageSize);
+	static void FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& outLookupTable, int imageSize, int speedUpAmout);
 	static void FindWhiteColor(Color& outWhiteColor, vector<vector<unsigned char*>>& outLookupTable, int imageSize);
 
 	/*Apply changes to image*/
