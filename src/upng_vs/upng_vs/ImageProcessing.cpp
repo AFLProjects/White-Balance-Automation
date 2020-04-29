@@ -467,13 +467,13 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<unsi
 		if ((*col).data[2] >= 255)
 			(*col).data[2] = 255;*/
 
-		unsigned char pR = (*outImgPtr)[i * 4];
-		unsigned char pG = (*outImgPtr)[(i * 4) + 1];
-		unsigned char pB = (*outImgPtr)[(i * 4) + 2];
+		unsigned char* pR = &(*outImgPtr)[i * 4];
+		unsigned char* pG = &(*outImgPtr)[(i * 4) + 1];
+		unsigned char* pB = &(*outImgPtr)[(i * 4) + 2];
 
-		int R_ = round(pR * whiteRef.data[0]);
-		int G_ = round(pG * whiteRef.data[1]);
-		int B_ = round(pB * whiteRef.data[2]);
+		int R_ = round(*pR * whiteRef.data[0]);
+		int G_ = round(*pG * whiteRef.data[1]);
+		int B_ = round(*pB * whiteRef.data[2]);
 
 		if (R_ > 255)
 			R_ = 255;
@@ -483,9 +483,9 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<unsi
 			B_ = 255;
 
 		/*Apply values to initial image ptr*/
-		pR = (char)R_;
-		pG = (char)G_;
-		pB = (char)B_;
+		*pR = (char)R_;
+		*pG = (char)G_;
+		*pB = (char)B_;
 
 		/*Progess bar*/
 		ApplyWorkFinishedOld = ApplyWorkFinished;
