@@ -17,9 +17,15 @@ Added basic files :
 
 ### 1.002
 ---
-
-Added basic files :
 - Added Multi color space functions
-- Added color adaptation algorithm (no finished)
 - Added some test files
+
+### 1.006
+---
+- Added white balance algorithm
+
+
+### 1.011
+---
+- Added adaptative saturation algorithm
 
