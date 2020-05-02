@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### 1.001
+### LOG 1
 ---
 
 - Added main file upng_vs.cpp
@@ -8,24 +8,32 @@
 - Change and save the settings.
 - Decode/Encode .PNG image files
 
-### 1.002
+### LOG 2
 ---
 
 Added basic files :
 - Contributions.md
 - Changelog.md
 
-### 1.002
+### LOG 3
 ---
 - Added Multi color space functions
 - Added some test files
 
-### 1.006
+### LOG 4
 ---
 - Added white balance algorithm
 
 
-### 1.011
+### LOG 5
 ---
 - Added adaptative saturation algorithm
+
+
+
+### LOG 6
+---
+-Added environement detection
+-Added adaptative saturation algorithm for different environements
+
 
