@@ -15,6 +15,7 @@ using namespace std;
 class ImageProcessing 
 {
 public :
+	enum Environement { Green, Red, Blue,Black,White,Neutral,ERROR };
 	/*<-----------FILE SECTION------------->*/
 
 	/*Check if file exists*/
@@ -26,7 +27,9 @@ public :
 	/*Save PNG file using data*/
 	static void encodeImage(const char* filename, std::vector<unsigned char>& image, unsigned width, unsigned height);
 
-	/*<-----------EDITING SECTION------------->/
+	/*<-----------EDITING SECTION------------->*/
+
+	static Environement GetImageEnvironement(Color& avrgColor, Color& avrgColorNoGray);
 
 	/*Convert vector<unsigned char> to vector<Color>*/
 	static void DecodePixels(vector<Color*>& out, vector<unsigned char>* inputImagePtr, int imageSize, int speedUpAmout);
@@ -38,11 +41,11 @@ public :
 	static void FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& outLookupTable, int imageSize, int speedUpAmout);
 
 	/*Apply changes to image*/
-	static void ApplyChanges(vector<unsigned char>* outImgPtr, vector<Color*>& imageCols, Color& whiteRef, int imageSize);
+	static void ApplyChanges(vector<unsigned char>* outImgPtr, vector<Color*>& imageCols, Color& whiteRef, int imageSize, ImageProcessing::Environement& outEnvironement);
 
 	/*Find saturation*/
 	static void FindSaturation(vector<Color*>& image, float& outSaturation, int imageSize, int speedupAmout);
 
 	/*Apply changes to image*/
-	static void ApplySaturation(vector<unsigned char>* outImgPtr,int imageSize, float targetSaturation, float saturation);
+	static void ApplySaturation(vector<unsigned char>* outImgPtr, int imageSize, float saturation, ImageProcessing::Environement environement);
 };

@@ -66,6 +66,7 @@ void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* i
 
 	}
 
+
 	/*Progress bar & time of execution*/
 	auto elapsed_extracting = std::chrono::high_resolution_clock::now() - start;
 	float extractionTime = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_extracting).count() / 1000.0;
@@ -75,6 +76,59 @@ void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* i
 
 	std::cout << "[" << extractionTime << "s][" << ExtractingkBytesPerSec << "kB/s] " << "Extracting colors (100%)[##########################]" << endl;
 
+}
+
+ImageProcessing::Environement ImageProcessing::GetImageEnvironement(Color& avrgColor,Color& avrgColorNoGray)
+{
+	/*Environement*/
+	ImageProcessing::Environement environement = ImageProcessing::Environement::ERROR;
+
+	/*Check evironement with all colors*/
+	float R = avrgColor.data[0];
+	float G = avrgColor.data[1];
+	float B = avrgColor.data[2];
+
+	if (R+G+B <= 150)
+		environement =  ImageProcessing::Environement::Black;
+	else if (R+G+B >= 500)
+		environement = ImageProcessing::Environement::White;
+	else if(abs(R-G) <= 20 && abs(G - B) <= 20 && abs(R - B) <= 20)
+		environement = ImageProcessing::Environement::Neutral;
+	else if(R>=G&&R>=B)
+		environement = ImageProcessing::Environement::Red;
+	else if (B >= G && B >= R)
+		environement = ImageProcessing::Environement::Blue;
+	else if (G >= R && G >= B)
+		environement = ImageProcessing::Environement::Green;
+	else 
+		environement = ImageProcessing::Environement::ERROR;
+
+	/*if environement was strictly white or black return */
+	if (environement == ImageProcessing::Environement::Black || environement == ImageProcessing::Environement::White)
+		return environement;
+	else /*Else analyse the environement without gray parts*/
+	{
+		int R = (int)round(avrgColorNoGray.data[0]*1.0);
+		int G = (int)round(avrgColorNoGray.data[1]*1.0);
+		int B = (int)round(avrgColorNoGray.data[2]*1.0);
+
+		if (R + G + B <= 150)
+			environement = ImageProcessing::Environement::Black;
+		else if (R + G + B >= 500)
+			environement = ImageProcessing::Environement::White;
+		else if (abs(R - G) <= 20 && abs(G - B) <= 20 && abs(R - B) <= 20)
+			environement = ImageProcessing::Environement::Neutral;
+		else if (R >= G && R >= B)
+			environement = ImageProcessing::Environement::Red;
+		else if (B >= G && B >= R)
+			environement = ImageProcessing::Environement::Blue;
+		else if (G >= R && G >= B)
+			environement = ImageProcessing::Environement::Green;
+		else
+			environement = ImageProcessing::Environement::ERROR;
+	}
+
+	return environement;
 }
 
 
@@ -212,13 +266,19 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 
 
 /*Apply changes to image*/
-void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Color*>& imageCols, Color& whiteRef, int imageSize) 
+void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Color*>& imageCols, Color& whiteRef, int imageSize,ImageProcessing::Environement& outEnvironement)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
 	/*Progess bar values*/
 	int ApplyWorkFinishedOld = 0;
 	int ApplyWorkFinished = 0;
+
+
+	Color avrgColor = Color(0, 0, 0, Color::ColorType::RGB);
+	Color avrgColorNoGray = Color(0, 0, 0, Color::ColorType::RGB);
+
+	int countNoGray = 0;
 
 	for (int i = 0; i < imageSize; i++)
 	{
@@ -284,6 +344,20 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 		(*outImgPtr)[(i * 4) + 1] = (char)G;
 		(*outImgPtr)[(i * 4) + 2] = (char)B;
 
+		avrgColor.data[0] += (R*1.0) / (imageSize*1.0);
+		avrgColor.data[1] += (G * 1.0) / (imageSize*1.0);
+		avrgColor.data[2] += (B * 1.0) / (imageSize*1.0);
+
+		if (!((abs(R - G) <= 20 && abs(G - B) <= 20 && abs(R - B) <= 20))) 
+		{
+			avrgColorNoGray.data[0] += (R*1.0);
+			avrgColorNoGray.data[1] += (G * 1.0);
+			avrgColorNoGray.data[2] += (B * 1.0);
+
+			countNoGray++;
+		}
+
+
 		/*Progess bar*/
 		ApplyWorkFinishedOld = ApplyWorkFinished;
 		ApplyWorkFinished = (int)round(((i*1.0) / (imageSize * 1.0))*22.0);
@@ -299,6 +373,12 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 		}
 		/*Progress bar end*/
 	}
+
+	avrgColorNoGray.data[0] /= countNoGray;
+	avrgColorNoGray.data[1] /= countNoGray;
+	avrgColorNoGray.data[2] /= countNoGray;
+
+	outEnvironement = GetImageEnvironement(avrgColor,avrgColorNoGray);
 
 	/*Progess bar*/
 	auto elapsed_apply = std::chrono::high_resolution_clock::now() - start;
@@ -319,13 +399,23 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 	int WorkFinishedOld = 0;
 	int WorkFinished = 0;
 
+	int count = 0;
+
 	for (int i = 0; i < imageSize; i += speedupAmout)
 	{
 		col = *(image[i]);
 
-		col.RGBtoHSV();
-		outSaturation += col.data[1] / (imageSize / speedupAmout);
-		col.HSVtoRGB();
+		float R = col.data[0];
+		float G = col.data[1];
+		float B = col.data[2];
+
+		if (!((abs(R - G) <= 40 && abs(G - B) <= 40 && abs(R - B) <= 40)))
+		{
+			col.RGBtoHSV();
+			outSaturation += col.data[1];
+			col.HSVtoRGB();
+			count++;
+		}
 
 		WorkFinishedOld = WorkFinished;
 		WorkFinished = (int)round(((i*1.0) / (imageSize*1.0))*22.0);
@@ -341,13 +431,15 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 		}
 	}
 
+	outSaturation /= count;
+
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	float Time = (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() / 1000.0);
 
 	std::cout << "[" << Time << "s] " << "Fiding saturation (100%)[##########################]" << endl;
 }
 
-void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imageSize, float targetSaturation, float saturation)
+void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imageSize, float saturation,ImageProcessing::Environement environement)
 {
 
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
@@ -369,6 +461,15 @@ void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imag
 			B = 255;
 
 		Color col = Color(R*1.0, G*1.0, B*1.0, Color::ColorType::RGB);
+
+		float targetSaturation = saturation;
+
+		if (environement == ImageProcessing::Environement::Green)
+			targetSaturation = 0.6; /*These constant values will be changed and polished later*/
+		else if (environement == ImageProcessing::Environement::Blue)
+			targetSaturation = 0.56; /*These constant values will be changed and polished later*/
+		else if (environement == ImageProcessing::Environement::Red)
+			targetSaturation = 0.48; /*These constant values will be changed and polished later*/
 
 		col.RGBtoHSV();
 		float satCoefficient = targetSaturation / saturation;
