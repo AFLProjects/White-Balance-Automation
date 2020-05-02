@@ -274,42 +274,15 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 	int ApplyWorkFinishedOld = 0;
 	int ApplyWorkFinished = 0;
 
-
+	/*Two average colors,one with and the other without gray parts of the image, to get a really feeling of thye image's dominating color*/
 	Color avrgColor = Color(0, 0, 0, Color::ColorType::RGB);
 	Color avrgColorNoGray = Color(0, 0, 0, Color::ColorType::RGB);
 
+	/*Amount non gray parts to make the average*/
 	int countNoGray = 0;
 
 	for (int i = 0; i < imageSize; i++)
 	{
-		/*
-		Color* col;
-		col = imageCols[i];
-
-		
-		if (whiteRef.data[0] > 3)
-			whiteRef.data[0] = 3;
-		if (whiteRef.data[1] > 3)
-			whiteRef.data[1] = 3;
-		if (whiteRef.data[2] > 3)
-			whiteRef.data[2] = 3;
-
-		(*col).data[0] *= whiteRef.data[0];
-		(*col).data[1] *= whiteRef.data[1];
-		(*col).data[2] *= whiteRef.data[2];
-
-		if ((*col).data[0] >= 255)
-			(*col).data[0] = 255;
-
-		if ((*col).data[1] >= 255)
-			(*col).data[1] = 255;
-
-		if ((*col).data[2] >= 255)
-			(*col).data[2] = 255;
-
-		(*outImgPtr)[i * 4] = (char)round((*col).data[0]);
-		(*outImgPtr)[(i * 4) + 1] = (char)round((*col).data[1]);
-		(*outImgPtr)[(i * 4) + 2] = (char)round((*col).data[2]);*/
 
 		if (whiteRef.data[0] > 3)
 			whiteRef.data[0] = 3;
@@ -348,6 +321,7 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 		avrgColor.data[1] += (G * 1.0) / (imageSize*1.0);
 		avrgColor.data[2] += (B * 1.0) / (imageSize*1.0);
 
+		/*if non gray*/
 		if (!((abs(R - G) <= 20 && abs(G - B) <= 20 && abs(R - B) <= 20))) 
 		{
 			avrgColorNoGray.data[0] += (R*1.0);
@@ -374,10 +348,12 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 		/*Progress bar end*/
 	}
 
+	/*average*/
 	avrgColorNoGray.data[0] /= countNoGray;
 	avrgColorNoGray.data[1] /= countNoGray;
 	avrgColorNoGray.data[2] /= countNoGray;
 
+	/*return environement*/
 	outEnvironement = GetImageEnvironement(avrgColor,avrgColorNoGray);
 
 	/*Progess bar*/
@@ -409,10 +385,11 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 		float G = col.data[1];
 		float B = col.data[2];
 
+		/*if vivid color*/
 		if (!((abs(R - G) <= 40 && abs(G - B) <= 40 && abs(R - B) <= 40)))
 		{
 			col.RGBtoHSV();
-			outSaturation += col.data[1];
+			outSaturation += col.data[1]; /*get saturation*/
 			col.HSVtoRGB();
 			count++;
 		}
@@ -431,6 +408,7 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 		}
 	}
 
+	/*average saturation*/
 	outSaturation /= count;
 
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
@@ -472,6 +450,7 @@ void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imag
 			targetSaturation = 0.48; /*These constant values will be changed and polished later*/
 
 		col.RGBtoHSV();
+		/*apply saturation change*/
 		float satCoefficient = targetSaturation / saturation;
 		col.data[1] *= satCoefficient; /*Saturation*/
 
