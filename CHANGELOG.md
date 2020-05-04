@@ -37,3 +37,11 @@ Added basic files :
 -Added adaptative saturation algorithm for different environements
 
 
+### LOG 7
+---
+-Added directory recursive file finding
+-Added edition of all files in any directory and its sub directories
+	Now we do -edit <dir>
+
+
+
