@@ -43,6 +43,7 @@ Commands :
 	
 
 Usage in code :
+
 ImageProcessing::EditImage(string path);
 ```
 **Results**
