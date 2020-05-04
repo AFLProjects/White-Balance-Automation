@@ -40,6 +40,10 @@ Once everything is setup you can start automatically editing your videos  and st
 
 Commands :
 	-edit <dir>		 //Edit your photos
+	
+
+Usage in code :
+ImageProcessing::EditImage(string path);
 ```
 **Results**
 ---
