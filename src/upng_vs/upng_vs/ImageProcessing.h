@@ -28,6 +28,9 @@ public :
 	static void encodeImage(const char* filename, std::vector<unsigned char>& image, unsigned width, unsigned height);
 
 	/*<-----------EDITING SECTION------------->*/
+	/*Edit Image*/
+	static void  EditImage(string path);
+
 
 	static Environement GetImageEnvironement(Color& avrgColor, Color& avrgColorNoGray);
 
@@ -38,7 +41,7 @@ public :
 	static void SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], vector<Color*>& imageCols, int imageSize, int speedUpAmout);
 
 	/*Find average white color using brightest pixels, using HSV->RGB , RGB->HSV conversions*/
-	static void FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& outLookupTable, int imageSize, int speedUpAmout);
+	static void FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize, int speedUpAmout, int& outWhiteLimit);
 
 	/*Apply changes to image*/
 	static void ApplyChanges(vector<unsigned char>* outImgPtr, vector<Color*>& imageCols, Color& whiteRef, int imageSize, ImageProcessing::Environement& outEnvironement);
@@ -48,4 +51,6 @@ public :
 
 	/*Apply changes to image*/
 	static void ApplySaturation(vector<unsigned char>* outImgPtr, int imageSize, float saturation, ImageProcessing::Environement environement);
+
+
 };

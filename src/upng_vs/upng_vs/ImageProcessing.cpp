@@ -183,13 +183,14 @@ void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&ou
 }
 
 /*Find average white color using brightest pixels, using HSV->RGB , RGB->HSV conversions*/
-void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize,int speedUpAmout)
+void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize,int speedUpAmout,int& outWhiteLimit)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
 	/*Count of "white" pixels i want to produce white reference pixel -> 0.8%*/
 	int whiteCount = round(0.8 / 100.0*imageSize)*speedUpAmout;
 	int currentCount = 0;
+	bool whiteLimitContinue = true;
 
 	/*Progess bar values*/
 	int WhiteRefWorkFinishedOld = 0;
@@ -198,6 +199,7 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 	/*Go over each sum R+G+B*/
 	for (int i = 765; i > -1; i--)
 	{
+	
 		/*If we haven't achieved need white count*/
 		if (currentCount < whiteCount)
 		{
@@ -212,6 +214,13 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 					{
 						Color col = *(sortedColorsLookupTable[i][j]);
 						currentCount++;
+
+						/*Find the i value when we get to .5% of image colors*/
+						if (currentCount >= round((0.5 / 100.0)*imageSize) && whiteLimitContinue)
+						{
+							outWhiteLimit = i;
+							whiteLimitContinue = false;
+						}
 
 						/*Convert to HSV color space*/
 						col.RGBtoHSV();
@@ -492,6 +501,75 @@ void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imag
 	float Time = (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() / 1000.0);
 
 	std::cout << "[" << Time << "s] " << "Applying saturation (100%)[##########################]" << endl;
+}
+void  ImageProcessing::EditImage(string path) {
+
+	unsigned int w = 0;
+	unsigned int h = 0;
+
+	/*Decode image from file*/
+	std::vector<unsigned char> image = ImageProcessing::decodeImage(path.c_str(), w, h);
+	std::vector<unsigned char> *imgPtr = &image;
+
+	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
+
+															/*Size of image in memory*/
+	float sizeMb = 3.0 * 32.0 * w * h / 1000.0 / 1000.0;
+	/*3x times because Color class has 3 floats so it is 96bit per col instead of 32bit , so 3 times more*/
+
+	cout << "Image decoded from [" << path << "][w:" << w << ";h:" << h << "][" << sizeMb << "MB]\n\n";
+
+	int imageSize = w * h;
+
+	int speedUp = 1; /*Loss of recision,by skipping pixels*/
+
+					 /*Convert from char to Color class*/
+	vector<Color*> imageCols(imageSize);
+	ImageProcessing::DecodePixels(imageCols, imgPtr, imageSize, speedUp);
+
+	/*Sort colors using lookup table where the index is R+G+B*/
+	vector<vector<Color*>> sortedColorsLookupTable(766); /*Multiple color can have the same sum*/
+
+														 /*Count of occurences for each sum value*/
+	int colCount[766];
+	memset(colCount, 0, sizeof(colCount));
+
+	ImageProcessing::SortPixels(sortedColorsLookupTable, colCount, imageCols, imageSize, speedUp);
+
+	/*Image white pixel*/
+	int whiteLimitVal = 0;
+	Color referenceWhite = Color(0, 0, 0, Color::ColorType::HSV);
+	ImageProcessing::FindWhiteColor(referenceWhite, sortedColorsLookupTable, imageSize, speedUp, whiteLimitVal);
+
+	cout << "White limit : " << whiteLimitVal << endl;
+
+	ImageProcessing::Environement imageEnvironement = ImageProcessing::Environement::Neutral;
+
+	/*Apply changes using the found white reference color*/
+	ImageProcessing::ApplyChanges(imgPtr, imageCols, referenceWhite, imageSize, imageEnvironement);
+
+	/*Find image saturation*/
+	float saturation = 0;
+	ImageProcessing::FindSaturation(imageCols, saturation, imageSize, speedUp);
+	cout << "Saturation : " << saturation << endl;
+
+	/*using the environement and current saturation, adapt the image*/
+	ImageProcessing::ApplySaturation(imgPtr, imageSize, saturation, imageEnvironement);
+
+	auto elapsed = std::chrono::high_resolution_clock::now() - start;
+	long milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+
+	printf("\nTotal time of execution(without decoding/encoding) : ");
+	cout << milliseconds << "ms" << endl;
+
+
+	cout << "Saving image...\n";
+
+	/*Save image*/
+	ImageProcessing::encodeImage((path).c_str(), *imgPtr, w, h);
+
+	cout << "Image Saved!\n" << endl;
+
 }
 
 #pragma endregion
