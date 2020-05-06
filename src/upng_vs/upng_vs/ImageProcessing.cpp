@@ -187,10 +187,10 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color image
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
-	Color avrgColor = Color(0, 0, 0, Color::ColorType::RGB);
-	Color avrgColorNoGray = Color(0, 0, 0, Color::ColorType::RGB);
+	//Color avrgColor = Color(0, 0, 0, Color::ColorType::RGB);
+	//Color avrgColorNoGray = Color(0, 0, 0, Color::ColorType::RGB);
 
-	int countNoGray = 0;
+	//int countNoGray = 0;
 
 	if (whiteRef.data[0] > 3)
 		whiteRef.data[0] = 3;
@@ -220,11 +220,10 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color image
 		(outImgPtr)[(i * 4) + 1] = (char)G;
 		(outImgPtr)[(i * 4) + 2] = (char)B;
 
+		/*
 		avrgColor.data[0] += R;
 		avrgColor.data[1] += G;
 		avrgColor.data[2] += B;
-
-		/*if non gray*/
 		if (!((abs(R - G) <= 20 && abs(G - B) <= 20 && abs(R - B) <= 20))) 
 		{
 			avrgColorNoGray.data[0] += R;
@@ -232,18 +231,18 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color image
 			avrgColorNoGray.data[2] += B;
 
 			countNoGray++;
-		}
+		}*/
 	}
-
+	/*
 	avrgColor.data[0] /= imageSize*1.0;
 	avrgColor.data[1] /= imageSize * 1.0;
 	avrgColor.data[2] /= imageSize * 1.0;
 
 	avrgColorNoGray.data[0] /= countNoGray;
 	avrgColorNoGray.data[1] /= countNoGray;
-	avrgColorNoGray.data[2] /= countNoGray;
+	avrgColorNoGray.data[2] /= countNoGray;*/
 
-	outEnvironement = GetImageEnvironement(avrgColor,avrgColorNoGray);
+	//outEnvironement = GetImageEnvironement(avrgColor,avrgColorNoGray);
 
 	/*Progess bar*/
 	auto elapsed_apply = std::chrono::high_resolution_clock::now() - start;
