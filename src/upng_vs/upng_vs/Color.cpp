@@ -19,6 +19,7 @@ Color::Color()
 	memset(&this->data, 0, sizeof(this->data));
 	this->ColorSpace = ColorType::RGB;
 }
+
 #pragma endregion
 
 

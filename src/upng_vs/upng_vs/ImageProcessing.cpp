@@ -1,6 +1,5 @@
 ﻿#include "ImageProcessing.h"
 
-
 #pragma warning(disable:4996)
 
 #pragma region File Managing
@@ -34,12 +33,8 @@ void ImageProcessing::encodeImage(const char* filename, std::vector<unsigned cha
 /*Convert vector<unsigned char> to vector<Color>*/
 void ImageProcessing::DecodePixels(Color out[], vector<unsigned char>& inputImagePtr, int imageSize, int speedUpAmout)
 {
-	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
+	auto start = std::chrono::high_resolution_clock::now();
 
-	int ExtractingWorkFinishedOld = 0; /*Progress bar value old*/
-	int ExtractingWorkFinished = 0; /*Progress bar value*/
-
-	/*Convert all the colors to Color class*/
 	const int p = 4 * speedUpAmout;
 	const int max = (imageSize * 4) - 1;
 
@@ -54,7 +49,6 @@ void ImageProcessing::DecodePixels(Color out[], vector<unsigned char>& inputImag
 	float ExtractingkBytesPerSec = ExtractingkBytesProcessed / extractionTime;
 
 	std::cout << "[" << extractionTime << "s][" << ExtractingkBytesPerSec << "kB/s] " << "Extracting colors (100%)" << endl;
-
 }
 
 ImageProcessing::Environement ImageProcessing::GetImageEnvironement(Color& avrgColor,Color& avrgColorNoGray)
@@ -110,15 +104,9 @@ ImageProcessing::Environement ImageProcessing::GetImageEnvironement(Color& avrgC
 	return environement;
 }
 
-
-/*Sort pixels by brigthness using look up table where index = R+G+B*/
 void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], Color imageCols[], int imageSize,int speedUpAmout)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
-
-	/*Progress bar values*/
-	int SortingWorkFinishedOld = 0;
-	int SortingWorkFinished = 0;
 
 	Color col;
 
@@ -140,44 +128,26 @@ void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&ou
 	/*Progess bar & time of exec end*/
 }
 
-/*Find average white color using brightest pixels, using HSV->RGB , RGB->HSV conversions*/
 void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize,int speedUpAmout,int& outWhiteLimit)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
 	/*Count of "white" pixels i want to produce white reference pixel -> 0.8%*/
 	const int whiteCount = round(0.8 / 100.0*imageSize)*speedUpAmout;
-	const int whitep5Count = round((0.5 / 100.0)*imageSize);
 	int currentCount = 0;
 	bool whiteLimitContinue = true;
 
-	/*Progess bar values*/
-	int WhiteRefWorkFinishedOld = 0;
-	int WhiteRefWorkFinished = 0;
-
-	/*Go over each sum R+G+B*/
 	for (int i = 765; i > -1; i--)
 	{
-	
-		/*If we haven't achieved need white count*/
 		if (currentCount < whiteCount)
 		{
-			/*Get the count of colors with that sum*/
 			int size = sortedColorsLookupTable[i].size();
-			if (size > 0) /*If there are*/
+			if (size > 0)
 			{
-				/*Go over each one of them*/
 				for (int j = 0; j < size; j++)
 				{
 					if (currentCount < whiteCount)
 					{
-						/*
-						if (currentCount >= whitep5Count && whiteLimitContinue)
-						{
-							outWhiteLimit = i;
-							whiteLimitContinue = false;
-						}*/
-
 						sortedColorsLookupTable[i][j]->RGBtoHSV();
 						outWhiteColor.data[0] += sortedColorsLookupTable[i][j]->data[0];
 						outWhiteColor.data[1] += sortedColorsLookupTable[i][j]->data[1];
@@ -185,22 +155,6 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 						sortedColorsLookupTable[i][j]->HSVtoRGB();
 
 						currentCount++;
-
-						/*Progress bar*/
-						/*
-						WhiteRefWorkFinishedOld = WhiteRefWorkFinished;
-						WhiteRefWorkFinished = (int)round(((currentCount*1.0) / (whiteCount * 1.0))*22.0);
-
-						if (WhiteRefWorkFinishedOld != WhiteRefWorkFinished) {
-							std::cout << "Calculating Avrg. White color(HSV) (" << WhiteRefWorkFinished / 22.0*100.0 << "%)[";
-							int workNotFinished = 22 - WhiteRefWorkFinished;
-
-							std::cout << string(WhiteRefWorkFinished, '#');
-							std::cout << string(workNotFinished, '-');
-
-							std::cout << "]\r";
-						}*/
-						/*Progress bar end*/
 					}
 					else
 					{
@@ -229,22 +183,13 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 
 }
 
-
-
-/*Apply changes to image*/
 void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color imageCols[], Color& whiteRef, int imageSize,ImageProcessing::Environement& outEnvironement)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
-	/*Progess bar values*/
-	int ApplyWorkFinishedOld = 0;
-	int ApplyWorkFinished = 0;
-
-	/*Two average colors,one with and the other without gray parts of the image, to get a really feeling of thye image's dominating color*/
 	Color avrgColor = Color(0, 0, 0, Color::ColorType::RGB);
 	Color avrgColorNoGray = Color(0, 0, 0, Color::ColorType::RGB);
 
-	/*Amount non gray parts to make the average*/
 	int countNoGray = 0;
 
 	if (whiteRef.data[0] > 3)
@@ -288,26 +233,8 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color image
 
 			countNoGray++;
 		}
-
-
-		/*Progess bar*/
-		/*
-		ApplyWorkFinishedOld = ApplyWorkFinished;
-		ApplyWorkFinished = (int)round(((i*1.0) / (imageSize * 1.0))*22.0);
-
-		if (ApplyWorkFinishedOld != ApplyWorkFinished) {
-			std::cout << "Applying changes (" << ApplyWorkFinished / 22.0*100.0 << "%)[";
-			int workNotFinished = 22 - ApplyWorkFinished;
-
-			std::cout << string(ApplyWorkFinished, '#');
-			std::cout << string(workNotFinished, '-');
-
-			std::cout << "]\r";
-		}*/
-		/*Progress bar end*/
 	}
 
-	/*average*/
 	avrgColor.data[0] /= imageSize*1.0;
 	avrgColor.data[1] /= imageSize * 1.0;
 	avrgColor.data[2] /= imageSize * 1.0;
@@ -316,7 +243,6 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color image
 	avrgColorNoGray.data[1] /= countNoGray;
 	avrgColorNoGray.data[2] /= countNoGray;
 
-	/*return environement*/
 	outEnvironement = GetImageEnvironement(avrgColor,avrgColorNoGray);
 
 	/*Progess bar*/
@@ -325,7 +251,6 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color image
 
 	std::cout << "[" << applyTime << "s] " << "Applying changes (100%)[##########################]" << endl;
 	/*Progress bar end*/
-	
 }
 
 void ImageProcessing::FindSaturation(Color image[], float& outSaturation,int imageSize,int speedupAmout)
@@ -334,15 +259,10 @@ void ImageProcessing::FindSaturation(Color image[], float& outSaturation,int ima
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
 	Color col;
-
-	int WorkFinishedOld = 0;
-	int WorkFinished = 0;
-
 	int count = 0;
 
 	for (int i = 0; i < imageSize; i += speedupAmout)
 	{
-
 		float R = image[i].data[0];
 		float G = image[i].data[1];
 		float B = image[i].data[2];
@@ -355,22 +275,8 @@ void ImageProcessing::FindSaturation(Color image[], float& outSaturation,int ima
 			col.HSVtoRGB();
 			count++;
 		}
-		/*
-		WorkFinishedOld = WorkFinished;
-		WorkFinished = (int)round(((i*1.0) / (imageSize*1.0))*22.0);
-
-		if (WorkFinishedOld != WorkFinished) {
-			std::cout << "Finding saturation (" << WorkFinished / 22.0*100.0 << "%)[";
-			int workNotFinished = 22 - WorkFinished;
-
-			std::cout << string(WorkFinished, '#');
-			std::cout << string(workNotFinished, '-');
-
-			std::cout << "]\r";
-		}*/
 	}
 
-	/*average saturation*/
 	outSaturation /= count;
 
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
@@ -381,11 +287,7 @@ void ImageProcessing::FindSaturation(Color image[], float& outSaturation,int ima
 
 void ImageProcessing::ApplySaturation(vector<unsigned char>& outImgPtr, int imageSize, float saturation,ImageProcessing::Environement environement)
 {
-
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
-
-	int WorkFinishedOld = 0;
-	int WorkFinished = 0;
 
 	for (int i = 0; i < imageSize; i++)
 	{
@@ -502,6 +404,7 @@ void  ImageProcessing::EditImage(string path) {
 	/*Apply changes using the found white reference color*/
 	ImageProcessing::ApplyChanges(image, imageCols, referenceWhite, imageSize, imageEnvironement);
 
+	/*Disabled saturation for the moment*/
 	/*
 	float saturation = 0;
 	ImageProcessing::FindSaturation(imageCols, saturation, imageSize, speedUp);
@@ -516,14 +419,9 @@ void  ImageProcessing::EditImage(string path) {
 	printf("\nTotal time of execution(without decoding/encoding) : ");
 	cout << milliseconds << "ms" << endl;
 
-
 	cout << "Saving image...\n";
-
-	/*Save image*/
 	ImageProcessing::encodeImage((path).c_str(), image, w, h);
-
 	cout << "Image Saved!\n" << endl;
-
 }
 
 #pragma endregion
