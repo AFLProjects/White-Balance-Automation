@@ -376,7 +376,7 @@ void  ImageProcessing::EditImage(string path) {
 
 	const int imageSize = w * h;
 
-	int speedUp = 1; /*Loss of recision,by skipping pixels*/
+	int speedUp = 3; /*Loss of precision,by skipping pixels*/
 
 					 /*Convert from char to Color class*/
 	Color* imageCols = new Color[imageSize];
