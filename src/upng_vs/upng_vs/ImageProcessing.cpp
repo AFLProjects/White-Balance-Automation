@@ -32,7 +32,7 @@ void ImageProcessing::encodeImage(const char* filename, std::vector<unsigned cha
 
 #pragma region ImageEditing
 /*Convert vector<unsigned char> to vector<Color>*/
-void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* inputImagePtr, int imageSize, int speedUpAmout)
+void ImageProcessing::DecodePixels(Color out[], vector<unsigned char>& inputImagePtr, int imageSize, int speedUpAmout)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
@@ -40,41 +40,20 @@ void ImageProcessing::DecodePixels(vector<Color*>& out, vector<unsigned char>* i
 	int ExtractingWorkFinished = 0; /*Progress bar value*/
 
 	/*Convert all the colors to Color class*/
-	int p = 4 * speedUpAmout;
-	int max = (imageSize * 4) - 1;
+	const int p = 4 * speedUpAmout;
+	const int max = (imageSize * 4) - 1;
+
 	for (int i = 0; i <  max;i += p)
-	{
-		/*Color extracting*/
-		Color *col = new Color((float)((*inputImagePtr)[i]), (float)((*inputImagePtr)[i + 1]), (float)((*inputImagePtr)[i + 2]), Color::ColorType::RGB);
-		out[i / 4] = col;
-		/*Color extracting end*/
-
-		/*Progress bar*/
-		ExtractingWorkFinishedOld = ExtractingWorkFinished;
-		ExtractingWorkFinished = (int)round((i / (imageSize * 4.0))*22.0);
-
-		if (ExtractingWorkFinishedOld != ExtractingWorkFinished) {
-			std::cout << "Extracting colors (" << ExtractingWorkFinished / 22.0*100.0 << "%)[";
-			int workNotFinished = 22 - ExtractingWorkFinished;
-
-			std::cout << string(ExtractingWorkFinished, '#');
-			std::cout << string(workNotFinished, '-');
-
-			std::cout << "]\r";
-		}
-		/*Progress bar end*/
-
-	}
-
+		out[i >> 2] = Color((float)((inputImagePtr)[i]), (float)((inputImagePtr)[i + 1]), (float)((inputImagePtr)[i + 2]), Color::ColorType::RGB);
 
 	/*Progress bar & time of execution*/
 	auto elapsed_extracting = std::chrono::high_resolution_clock::now() - start;
 	float extractionTime = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_extracting).count() / 1000.0;
 
-	int ExtractingkBytesProcessed = sizeof(vector<Color*>) + (sizeof(Color) * out.size() / 1000.0);
+	int ExtractingkBytesProcessed = sizeof(vector<Color*>) + (sizeof(Color) * imageSize / 1000.0);
 	float ExtractingkBytesPerSec = ExtractingkBytesProcessed / extractionTime;
 
-	std::cout << "[" << extractionTime << "s][" << ExtractingkBytesPerSec << "kB/s] " << "Extracting colors (100%)[##########################]" << endl;
+	std::cout << "[" << extractionTime << "s][" << ExtractingkBytesPerSec << "kB/s] " << "Extracting colors (100%)" << endl;
 
 }
 
@@ -133,7 +112,7 @@ ImageProcessing::Environement ImageProcessing::GetImageEnvironement(Color& avrgC
 
 
 /*Sort pixels by brigthness using look up table where index = R+G+B*/
-void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], vector<Color*>& imageCols, int imageSize,int speedUpAmout)
+void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], Color imageCols[], int imageSize,int speedUpAmout)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
@@ -145,40 +124,19 @@ void ImageProcessing::SortPixels(vector<vector<Color*>>& outLookupTable, int(&ou
 
 	for (int i = 0; i < imageSize; i+=speedUpAmout)
 	{
-		/*Get col*/
-		col = *(imageCols[i]);
-
-		int index = (int)(col.data[0] + col.data[1] + col.data[2]); /*Find index R+G+B*/
-		outLookupTable[index].push_back(imageCols[i]); /*Push color*/
-		/*Tutaj spóbuje zrobić array i nie robić pusz_back bo jest wolny*/
-
-		/*Add color count*/
-		outColCount[index] += 1;
-
-		/*Progess bar*/
-		SortingWorkFinishedOld = SortingWorkFinished;
-		SortingWorkFinished = (int)round(((i*1.0) / (imageSize * 1.0))*22.0);
-
-		if (SortingWorkFinishedOld != SortingWorkFinished) {
-			std::cout << "Sorting colors (" << SortingWorkFinished / 22.0*100.0 << "%)[";
-			int workNotFinished = 22 - SortingWorkFinished;
-
-			std::cout << string(SortingWorkFinished, '#');
-			std::cout << string(workNotFinished, '-');
-
-			std::cout << "]\r";
-		}
-		/*Progress bar end*/
+		int index = (int)(imageCols[i].data[0] + imageCols[i].data[1] + imageCols[i].data[2]);
+		outLookupTable[index].push_back(&imageCols[i]);
+		outColCount[index]++;
 	}
 
 	/*Progess bar & time of exec*/
 	auto elapsed_sorting = std::chrono::high_resolution_clock::now() - start;
 	float sortingTime = (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_sorting).count() / 1000.0);
 
-	int SortingkBytesProcessed = (sizeof(vector<vector<Color*>>) + sizeof(Color*) * imageCols.size()) / 1000.0;
+	int SortingkBytesProcessed = (sizeof(vector<vector<Color*>>) + sizeof(Color*) * imageSize) / 1000.0;
 	float SortingBytesPerSec = SortingkBytesProcessed / sortingTime;
 
-	std::cout << "[" << sortingTime << "s][" << SortingBytesPerSec << "kB/s] " << "Sorting colors (100%)[##########################]" << endl;
+	std::cout << "[" << sortingTime << "s][" << SortingBytesPerSec << "kB/s] " << "Sorting colors (100%)" << endl;
 	/*Progess bar & time of exec end*/
 }
 
@@ -188,7 +146,8 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
 	/*Count of "white" pixels i want to produce white reference pixel -> 0.8%*/
-	int whiteCount = round(0.8 / 100.0*imageSize)*speedUpAmout;
+	const int whiteCount = round(0.8 / 100.0*imageSize)*speedUpAmout;
+	const int whitep5Count = round((0.5 / 100.0)*imageSize);
 	int currentCount = 0;
 	bool whiteLimitContinue = true;
 
@@ -212,28 +171,23 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 				{
 					if (currentCount < whiteCount)
 					{
-						Color col = *(sortedColorsLookupTable[i][j]);
-						currentCount++;
-
-						/*Find the i value when we get to .5% of image colors*/
-						if (currentCount >= round((0.5 / 100.0)*imageSize) && whiteLimitContinue)
+						/*
+						if (currentCount >= whitep5Count && whiteLimitContinue)
 						{
 							outWhiteLimit = i;
 							whiteLimitContinue = false;
-						}
+						}*/
 
-						/*Convert to HSV color space*/
-						col.RGBtoHSV();
+						sortedColorsLookupTable[i][j]->RGBtoHSV();
+						outWhiteColor.data[0] += sortedColorsLookupTable[i][j]->data[0];
+						outWhiteColor.data[1] += sortedColorsLookupTable[i][j]->data[1];
+						outWhiteColor.data[2] += sortedColorsLookupTable[i][j]->data[2];
+						sortedColorsLookupTable[i][j]->HSVtoRGB();
 
-						/*Average white color*/
-						outWhiteColor.data[0] += col.data[0] / whiteCount;
-						outWhiteColor.data[1] += col.data[1] / whiteCount;
-						outWhiteColor.data[2] += col.data[2] / whiteCount;
-
-						/*Back to RGB*/
-						col.HSVtoRGB();
+						currentCount++;
 
 						/*Progress bar*/
+						/*
 						WhiteRefWorkFinishedOld = WhiteRefWorkFinished;
 						WhiteRefWorkFinished = (int)round(((currentCount*1.0) / (whiteCount * 1.0))*22.0);
 
@@ -245,7 +199,7 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 							std::cout << string(workNotFinished, '-');
 
 							std::cout << "]\r";
-						}
+						}*/
 						/*Progress bar end*/
 					}
 					else
@@ -257,6 +211,9 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 		}
 	}
 
+	outWhiteColor.data[0] /= whiteCount;
+	outWhiteColor.data[1] /= whiteCount;
+	outWhiteColor.data[2] /= whiteCount;
 
 	/*Progress bar*/
 	
@@ -275,7 +232,7 @@ void ImageProcessing::FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>
 
 
 /*Apply changes to image*/
-void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Color*>& imageCols, Color& whiteRef, int imageSize,ImageProcessing::Environement& outEnvironement)
+void ImageProcessing::ApplyChanges(vector<unsigned char>& outImgPtr, Color imageCols[], Color& whiteRef, int imageSize,ImageProcessing::Environement& outEnvironement)
 {
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
@@ -290,19 +247,18 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 	/*Amount non gray parts to make the average*/
 	int countNoGray = 0;
 
+	if (whiteRef.data[0] > 3)
+		whiteRef.data[0] = 3;
+	if (whiteRef.data[1] > 3)
+		whiteRef.data[1] = 3;
+	if (whiteRef.data[2] > 3)
+		whiteRef.data[2] = 3;
+
 	for (int i = 0; i < imageSize; i++)
 	{
-
-		if (whiteRef.data[0] > 3)
-			whiteRef.data[0] = 3;
-		if (whiteRef.data[1] > 3)
-			whiteRef.data[1] = 3;
-		if (whiteRef.data[2] > 3)
-			whiteRef.data[2] = 3;
-
-		int R = (int)round((*outImgPtr)[i * 4] * whiteRef.data[0]);
-		int G = (int)round((*outImgPtr)[(i * 4) + 1] * whiteRef.data[1]);
-		int B = (int)round((*outImgPtr)[(i * 4) + 2] * whiteRef.data[2]);
+		int R = (int)round((outImgPtr)[i * 4] * whiteRef.data[0]);
+		int G = (int)round((outImgPtr)[(i * 4) + 1] * whiteRef.data[1]);
+		int B = (int)round((outImgPtr)[(i * 4) + 2] * whiteRef.data[2]);
 
 		if (R > 255)
 			R = 255;
@@ -311,37 +267,31 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 		if (B > 255)
 			B = 255;
 
-		(*imageCols[i]).data[0] *= whiteRef.data[0];
-		(*imageCols[i]).data[1] *= whiteRef.data[1];
-		(*imageCols[i]).data[2] *= whiteRef.data[2];
+		imageCols[i].data[0] = R;
+		imageCols[i].data[1] = G;
+		imageCols[i].data[2] = B;
 
-		if ((*imageCols[i]).data[0] > 255)
-			(*imageCols[i]).data[0] = 255;
-		if ((*imageCols[i]).data[1] > 255)
-			(*imageCols[i]).data[1] = 255;
-		if ((*imageCols[i]).data[2] > 255)
-			(*imageCols[i]).data[2] = 255;
+		(outImgPtr)[i * 4] = (char)R;
+		(outImgPtr)[(i * 4) + 1] = (char)G;
+		(outImgPtr)[(i * 4) + 2] = (char)B;
 
-		(*outImgPtr)[i * 4] = (char)R;
-		(*outImgPtr)[(i * 4) + 1] = (char)G;
-		(*outImgPtr)[(i * 4) + 2] = (char)B;
-
-		avrgColor.data[0] += (R*1.0) / (imageSize*1.0);
-		avrgColor.data[1] += (G * 1.0) / (imageSize*1.0);
-		avrgColor.data[2] += (B * 1.0) / (imageSize*1.0);
+		avrgColor.data[0] += R;
+		avrgColor.data[1] += G;
+		avrgColor.data[2] += B;
 
 		/*if non gray*/
 		if (!((abs(R - G) <= 20 && abs(G - B) <= 20 && abs(R - B) <= 20))) 
 		{
-			avrgColorNoGray.data[0] += (R*1.0);
-			avrgColorNoGray.data[1] += (G * 1.0);
-			avrgColorNoGray.data[2] += (B * 1.0);
+			avrgColorNoGray.data[0] += R;
+			avrgColorNoGray.data[1] += G;
+			avrgColorNoGray.data[2] += B;
 
 			countNoGray++;
 		}
 
 
 		/*Progess bar*/
+		/*
 		ApplyWorkFinishedOld = ApplyWorkFinished;
 		ApplyWorkFinished = (int)round(((i*1.0) / (imageSize * 1.0))*22.0);
 
@@ -353,11 +303,15 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 			std::cout << string(workNotFinished, '-');
 
 			std::cout << "]\r";
-		}
+		}*/
 		/*Progress bar end*/
 	}
 
 	/*average*/
+	avrgColor.data[0] /= imageSize*1.0;
+	avrgColor.data[1] /= imageSize * 1.0;
+	avrgColor.data[2] /= imageSize * 1.0;
+
 	avrgColorNoGray.data[0] /= countNoGray;
 	avrgColorNoGray.data[1] /= countNoGray;
 	avrgColorNoGray.data[2] /= countNoGray;
@@ -374,7 +328,7 @@ void ImageProcessing::ApplyChanges(vector<unsigned char>* outImgPtr, vector<Colo
 	
 }
 
-void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation,int imageSize,int speedupAmout)
+void ImageProcessing::FindSaturation(Color image[], float& outSaturation,int imageSize,int speedupAmout)
 {
 
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
@@ -388,11 +342,10 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 
 	for (int i = 0; i < imageSize; i += speedupAmout)
 	{
-		col = *(image[i]);
 
-		float R = col.data[0];
-		float G = col.data[1];
-		float B = col.data[2];
+		float R = image[i].data[0];
+		float G = image[i].data[1];
+		float B = image[i].data[2];
 
 		/*if vivid color*/
 		if (!((abs(R - G) <= 40 && abs(G - B) <= 40 && abs(R - B) <= 40)))
@@ -402,7 +355,7 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 			col.HSVtoRGB();
 			count++;
 		}
-
+		/*
 		WorkFinishedOld = WorkFinished;
 		WorkFinished = (int)round(((i*1.0) / (imageSize*1.0))*22.0);
 
@@ -414,7 +367,7 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 			std::cout << string(workNotFinished, '-');
 
 			std::cout << "]\r";
-		}
+		}*/
 	}
 
 	/*average saturation*/
@@ -426,7 +379,7 @@ void ImageProcessing::FindSaturation(vector<Color*>& image, float& outSaturation
 	std::cout << "[" << Time << "s] " << "Fiding saturation (100%)[##########################]" << endl;
 }
 
-void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imageSize, float saturation,ImageProcessing::Environement environement)
+void ImageProcessing::ApplySaturation(vector<unsigned char>& outImgPtr, int imageSize, float saturation,ImageProcessing::Environement environement)
 {
 
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
@@ -436,9 +389,9 @@ void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imag
 
 	for (int i = 0; i < imageSize; i++)
 	{
-		int R = (int)round((*outImgPtr)[i * 4]);
-		int G = (int)round((*outImgPtr)[(i * 4) + 1]);
-		int B = (int)round((*outImgPtr)[(i * 4) + 2]);
+		int R = (int)round((outImgPtr)[i * 4]);
+		int G = (int)round((outImgPtr)[(i * 4) + 1]);
+		int B = (int)round((outImgPtr)[(i * 4) + 2]);
 
 		if (R > 255)
 			R = 255;
@@ -479,10 +432,11 @@ void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imag
 		if (B > 255)
 			B = 255;
 
-		(*outImgPtr)[i * 4] = (char)R;
-		(*outImgPtr)[(i * 4) + 1] = (char)G;
-		(*outImgPtr)[(i * 4) + 2] = (char)B;
+		(outImgPtr)[i * 4] = (char)R;
+		(outImgPtr)[(i * 4) + 1] = (char)G;
+		(outImgPtr)[(i * 4) + 2] = (char)B;
 
+		/*
 		WorkFinishedOld = WorkFinished;
 		WorkFinished = (int)round(((i*1.0) / (imageSize*1.0))*22.0);
 
@@ -494,7 +448,7 @@ void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imag
 			std::cout << string(workNotFinished, '-');
 
 			std::cout << "]\r";
-		}
+		}*/
 	}
 
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
@@ -502,6 +456,7 @@ void ImageProcessing::ApplySaturation(vector<unsigned char>* outImgPtr, int imag
 
 	std::cout << "[" << Time << "s] " << "Applying saturation (100%)[##########################]" << endl;
 }
+
 void  ImageProcessing::EditImage(string path) {
 
 	unsigned int w = 0;
@@ -509,7 +464,6 @@ void  ImageProcessing::EditImage(string path) {
 
 	/*Decode image from file*/
 	std::vector<unsigned char> image = ImageProcessing::decodeImage(path.c_str(), w, h);
-	std::vector<unsigned char> *imgPtr = &image;
 
 	auto start = std::chrono::high_resolution_clock::now(); /*timer*/
 
@@ -519,13 +473,13 @@ void  ImageProcessing::EditImage(string path) {
 
 	cout << "Image decoded from [" << path << "][w:" << w << ";h:" << h << "][" << sizeMb << "MB]\n\n";
 
-	int imageSize = w * h;
+	const int imageSize = w * h;
 
 	int speedUp = 1; /*Loss of recision,by skipping pixels*/
 
 					 /*Convert from char to Color class*/
-	vector<Color*> imageCols(imageSize);
-	ImageProcessing::DecodePixels(imageCols, imgPtr, imageSize, speedUp);
+	Color* imageCols = new Color[imageSize];
+	ImageProcessing::DecodePixels(imageCols, image, imageSize, speedUp);
 
 	/*Sort colors using lookup table where the index is R+G+B*/
 	vector<vector<Color*>> sortedColorsLookupTable(766); /*Multiple color can have the same sum*/
@@ -546,15 +500,15 @@ void  ImageProcessing::EditImage(string path) {
 	ImageProcessing::Environement imageEnvironement = ImageProcessing::Environement::Neutral;
 
 	/*Apply changes using the found white reference color*/
-	ImageProcessing::ApplyChanges(imgPtr, imageCols, referenceWhite, imageSize, imageEnvironement);
+	ImageProcessing::ApplyChanges(image, imageCols, referenceWhite, imageSize, imageEnvironement);
 
-	/*Find image saturation*/
+	/*
 	float saturation = 0;
 	ImageProcessing::FindSaturation(imageCols, saturation, imageSize, speedUp);
 	cout << "Saturation : " << saturation << endl;
 
-	/*using the environement and current saturation, adapt the image*/
-	ImageProcessing::ApplySaturation(imgPtr, imageSize, saturation, imageEnvironement);
+
+	ImageProcessing::ApplySaturation(imgPtr, imageSize, saturation, imageEnvironement);*/
 
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	long milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
@@ -566,7 +520,7 @@ void  ImageProcessing::EditImage(string path) {
 	cout << "Saving image...\n";
 
 	/*Save image*/
-	ImageProcessing::encodeImage((path).c_str(), *imgPtr, w, h);
+	ImageProcessing::encodeImage((path).c_str(), image, w, h);
 
 	cout << "Image Saved!\n" << endl;
 
