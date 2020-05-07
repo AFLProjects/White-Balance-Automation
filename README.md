@@ -52,6 +52,7 @@ Commands :
 1. Clone repo and create a new branch: `$ git checkout https://github.com/aflprojects/uvideo -b name_for_new_branch`.
 2. Make changes and test
 3. Submit Pull Request with comprehensive description of changes
+4. Don't forget to drop a star, it helps a lot :wink:
 
 **Acknowledgements**
 ---
