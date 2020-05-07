@@ -2,7 +2,7 @@
 	<img width="200px" src="https://imgur.com/1cgAdvW.png"/>
 </p>
 <p align="center">
-	AUPHOTO is a C++ automated program that edits the visual aspects of your photos using some basic color grading and correction. 
+	AUPHOTO is a C++ automated program that edits the visual aspects of your photos using some basic color grading and white balance
 </p>
 	
 ---------
