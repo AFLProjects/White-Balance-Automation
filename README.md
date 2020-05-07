@@ -14,7 +14,7 @@
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your photos.
 The program will take care of the color balencing and polishing.
 
-Once everything is setup you can start automatically editing your videos  and stop losing your time doing labor :wink:
+Once everything is setup you can start automatically editing your photos  and stop losing your time doing labor :wink:
 
 <br></br>
 **Table of contents**
