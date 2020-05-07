@@ -27,18 +27,6 @@ Added basic files :
 
 ### LOG 5
 ---
-- Added adaptative saturation algorithm
-
-
-
-### LOG 6
----
--Added environement detection
--Added adaptative saturation algorithm for different environements
-
-
-### LOG 7
----
 -Added directory recursive file finding
 -Added edition of all files in any directory and its sub directories
 	Now we do -edit <dir>

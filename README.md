@@ -27,9 +27,8 @@ Once everything is setup you can start automatically editing your videos  and st
 
 **Features**
 ---
-- Implemented white balancing algorithm
-- Contains adaptative saturation algorithm
-- It has a color environement detection to enhance saturation adaptation
+- Implements simple color grading algorithm
+- Has white balancing algorithm
 
 **Usage**
 ---
