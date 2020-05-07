@@ -6,18 +6,16 @@ float Color::min(float a, float b) { return (b < a) ? b : a; }
 float Color::max(float a, float b) { return (b > a) ? b : a; }
 
 #pragma region Constructors
-Color::Color(float a, float b, float c, ColorType targetColSpace)
+Color::Color(unsigned char a, unsigned char b, unsigned char c)
 {
 	this->data[0] = a;
 	this->data[1] = b;
 	this->data[2] = c;
-	this->ColorSpace = targetColSpace;
 }
 
 Color::Color() 
 {
 	memset(&this->data, 0, sizeof(this->data));
-	this->ColorSpace = ColorType::RGB;
 }
 
 #pragma endregion
@@ -25,11 +23,14 @@ Color::Color()
 
 #pragma region Conversions
 /*Convert from RGB(red,green,blue) to HSV(hue,saturation,value)*/
-void Color::RGBtoHSV() {
+float* Color::RGBtoHSV() {
 
-	float fRed = this->data[0] / 255.0;
-	float fGreen = this->data[1] / 255.0;
-	float fBlue = this->data[2] / 255.0;
+	float HSV[3];
+
+	float fRed = ((float)(this->data[0])) / 255.0;
+	float fGreen = ((float)(this->data[1])) / 255.0;
+	float fBlue = ((float)(this->data[2])) / 255.0;
+
 	float fHue = 0;
 	float fSaturation = 0;
 	float fValue = 0;
@@ -68,20 +69,25 @@ void Color::RGBtoHSV() {
 		fHue = 360.0 + fHue;
 	}
 
-	this->data[0] = fHue;
-	this->data[1] = fSaturation;
-	this->data[2] = fValue;
+	HSV[0] = fHue;
+	HSV[1] = fSaturation;
+	HSV[2] = fValue;
+
+	
+	
+	return HSV;
 }
 
 /*Convert from HSV(hue,saturation,value) to RGB(red,green,blue)*/
-void Color::HSVtoRGB() {
+float* Color::HSVtoRGB(float* HSV) {
 
+	float RGB[3];
 	float fRed = 0;
 	float fGreen = 0;
 	float fBlue = 0;
-	float fHue = this->data[0];
-	float fSaturation = this->data[1];
-	float fValue = this->data[2];
+	float fHue = HSV[0];
+	float fSaturation = HSV[1];
+	float fValue = HSV[2];
 
 	float fC = fValue * fSaturation;
 	float fHPrime = fmod(fHue / 60.0, 6);
@@ -128,12 +134,15 @@ void Color::HSVtoRGB() {
 	fGreen += fM;
 	fBlue += fM;
 
-	this->data[0] = fRed * 255.0;
-	this->data[1] = fGreen * 255.0;
-	this->data[2] = fBlue * 255.0;
+	RGB[0] = fRed * 255.0;
+	RGB[1] = fGreen * 255.0;
+	RGB[2] = fBlue * 255.0;
+
+	return RGB;
 }
 
 /*Convert from RGB to XYZ Color Space*/
+/*
 void Color::RGBtoXYZ()
 {
 	double red = this->data[0] / 255.0;
@@ -148,9 +157,10 @@ void Color::RGBtoXYZ()
 	this->data[1] = red * 0.2126729 + green * 0.7151522 + blue * 0.0721750;
 	this->data[2] = red * 0.0193339 + green * 0.1191920 + blue * 0.9503041;
 }
-
+*/
 
 /*Convert from XYZ to RGB Color Space*/
+/*
 void Color::XYZtoRGB()
 {
 	double x = this->data[0] / 100.0;
@@ -169,18 +179,19 @@ void Color::XYZtoRGB()
 	this->data[1] = green;
 	this->data[2] = blue;
 }
-
+*/
 /*Outputs color temperature*/
+/*
 float Color::getTemperature()
 {
+	
 	if (this->ColorSpace != ColorType::XYZ)
 		this->SwitchTo(ColorType::XYZ);
 
-	/*normalized chromaticity values*/
 	float x = this->data[0] / (this->data[0] + this->data[1] + this->data[2]);
 	float y = this->data[1] / (this->data[0] + this->data[1] + this->data[2]);
 
-	/*CCT exponential approximation*/
+
 	float xe = 0.3366;
 	float ye = 0.1735;
 	float a0 = -949.86315;
@@ -196,8 +207,9 @@ float Color::getTemperature()
 
 	return temperature_CCT;
 }
-
+*/
 /*Easly switch between color spaces*/
+/*
 void Color::SwitchTo(ColorType targetColorSpace)
 {
 	if (this->ColorSpace == ColorType::RGB && targetColorSpace == ColorType::XYZ)
@@ -232,6 +244,6 @@ void Color::SwitchTo(ColorType targetColorSpace)
 		this->RGBtoXYZ();
 		this->ColorSpace = ColorType::XYZ;
 	}
-}
+}*/
 #pragma endregion
 

@@ -15,7 +15,6 @@ using namespace std;
 class ImageProcessing 
 {
 public :
-	enum Environement { Green, Red, Blue,Black,White,Neutral,ERROR };
 	/*<-----------FILE SECTION------------->*/
 
 	/*Check if file exists*/
@@ -31,9 +30,6 @@ public :
 	/*Edit Image*/
 	static void  EditImage(string path);
 
-
-	static Environement GetImageEnvironement(Color& avrgColor, Color& avrgColorNoGray);
-
 	/*Convert vector<unsigned char> to vector<Color>*/
 	static void DecodePixels(Color out[], vector<unsigned char>& inputImagePtr, int imageSize, int speedUpAmout);
 
@@ -41,16 +37,8 @@ public :
 	static void SortPixels(vector<vector<Color*>>& outLookupTable, int(&outColCount)[766], Color imageCols[], int imageSize, int speedUpAmout);
 
 	/*Find average white color using brightest pixels, using HSV->RGB , RGB->HSV conversions*/
-	static void FindWhiteColor(Color& outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize, int speedUpAmout, int& outWhiteLimit);
+	static void FindWhiteColor(float* outWhiteColor, vector<vector<Color*>>& sortedColorsLookupTable, int imageSize, int speedUpAmout, int& outWhiteLimit);
 
 	/*Apply changes to image*/
-	static void ApplyChanges(vector<unsigned char>& outImgPtr, Color imageCols[], Color& whiteRef, int imageSize, ImageProcessing::Environement& outEnvironement);
-
-	/*Find saturation*/
-	static void FindSaturation(Color image[], float& outSaturation, int imageSize, int speedupAmout);
-
-	/*Apply changes to image*/
-	static void ApplySaturation(vector<unsigned char>& outImgPtr, int imageSize, float saturation, ImageProcessing::Environement environement);
-
-
+	static void ApplyChanges(vector<unsigned char>& outImgPtr, Color imageCols[], float* whiteRef, int imageSize);
 };
