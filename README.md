@@ -1,20 +1,6 @@
-<p align="center">
-	<img width="200px" src="https://imgur.com/1cgAdvW.png"/>
-</p>
-<p align="center">
-	AUPHOTO is a C++ automated program that edits the visual aspects of your photos using some basic color grading and white balance
-</p>
-	
----------
-
-<p align="center">
-	<a href="">   <img src="https://img.shields.io/badge/Liscence-MIT-green" alt="Liscence"></a>   <img src="https://img.shields.io/badge/Platform-Windows-lightgray" alt="Platform"></a><a href="">   <img src="https://img.shields.io/badge/Version-1.013-blue"alt="Version"></a>
-</p>
-
+This is a C++ automated program that edits the visual aspects of your photos using some basic color grading and white balance
 The main idea of this program is to deprive you of all the **repetitive labor** while editing your photos.
 The program will take care of the color balencing and polishing.
-
-Once everything is setup you can start automatically editing your photos  and stop losing your time doing labor :wink:
 
 <br></br>
 **Table of contents**
